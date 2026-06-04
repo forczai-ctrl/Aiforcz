@@ -2,8 +2,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
+import pathlib
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./aiforcz.db")
+# Get database URL from environment, fallback to SQLite
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    # Use absolute path for SQLite to avoid working directory issues
+    db_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    DATABASE_URL = f"sqlite:///{os.path.join(db_dir, 'aiforcz.db')}"
 
 # Handle Render's PostgreSQL connection string (postgres:// -> postgresql://)
 if DATABASE_URL.startswith("postgres://"):
