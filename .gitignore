@@ -3,8 +3,10 @@
 *.sqlite
 *.sqlite3
 
-# Environment files
+# Environment files (actual secrets)
 .env
+# But keep .env.example files
+!.env.example
 
 # Python
 __pycache__/
@@ -38,5 +40,5 @@ Thumbs.db
 # Logs
 *.log
 
-# CSV data
-*.csv
+# Keep change_requests.csv as it's needed for seed data
+!aiforcz_backend/change_requests.csv

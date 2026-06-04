@@ -1,0 +1,9 @@
+change_id,approved,emergency,implemented_by,ticket_number,description
+CH001,Yes,No,mike.developer,REQ001234,Add S3 bucket policy for data lake
+CH002,No,No,john.admin,,Direct IAM policy update without approval
+CH003,Yes,Yes,susan.finance,EMG0001,Emergency firewall rule update for SOX compliance
+CH004,No,Yes,mike.developer,,Emergency deployment without post-review ticket
+CH005,Yes,No,john.admin,REQ001235,Create new developer IAM group
+CH006,No,No,audit.test,,Modify audit log retention policy
+CH007,Yes,No,susan.finance,REQ001236,Update finance department S3 bucket policy
+CH008,Yes,Yes,mike.developer,EMG0002,Critical security patch deployment
