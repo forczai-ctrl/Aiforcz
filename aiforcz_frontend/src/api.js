@@ -133,10 +133,6 @@ const FALLBACK_USER_ACCESS_RISK = {
   mfaDisabled: 4, sharedAccounts: 1, noManagerApproval: 3,
 };
 
-const FALLBACK_USER_ACCESS_RISK_DETAILED = {
-  mfaDisabled: 4, sharedAccounts: 1, noManagerApproval: 3,
-};
-
 // Helper to wrap API calls with fallback
 // Returns axios-like response object so pages using .data work correctly
 const withFallback = (apiCall, fallbackData) => {
