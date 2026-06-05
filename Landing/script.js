@@ -53,6 +53,47 @@ document.addEventListener("DOMContentLoaded", () => {
     return typeof value === "string" && value.trim() ? value.trim() : "Not provided";
   };
 
+  const buildDemoEmail = ({ recipient, firstName, lastName, email, company, employees, message }) => {
+    const fullName = [firstName, lastName].filter((value) => value !== "Not provided").join(" ");
+    const submittedAt = new Date().toLocaleString();
+    const subjectParts = [
+      "Book Demo Request",
+      fullName || email,
+      company !== "Not provided" ? company : ""
+    ].filter(Boolean);
+    const subject = subjectParts.join(" | ");
+    const bodyLines = [
+      "BOOK DEMO REQUEST",
+      "=================",
+      "",
+      `Submitted At: ${submittedAt}`,
+      "Source: AIFORCZ Landing Page",
+      "",
+      "VISITOR DETAILS",
+      "---------------",
+      `Name: ${fullName || "Not provided"}`,
+      `Email: ${email}`,
+      `Company: ${company}`,
+      `Employees: ${employees}`,
+      "",
+      "REQUEST MESSAGE",
+      "---------------",
+      message,
+      "",
+      "NEXT ACTION",
+      "-----------",
+      `Reply to the visitor at: ${email}`,
+      "Schedule a demo call and share the meeting details."
+    ];
+    const headers = [
+      `subject=${encodeURIComponent(subject)}`,
+      `body=${encodeURIComponent(bodyLines.join("\n"))}`,
+      `reply-to=${encodeURIComponent(email)}`
+    ];
+
+    return `mailto:${recipient}?${headers.join("&")}`;
+  };
+
   const openDemoModal = (trigger) => {
     if (!demoModal) return;
 
@@ -125,32 +166,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const company = getDemoValue(formData, "company");
       const employees = getDemoValue(formData, "employees");
       const message = getDemoValue(formData, "message");
-      const fullName = [firstName, lastName].filter((value) => value !== "Not provided").join(" ");
-
-      const subject = `Book demo request${company !== "Not provided" ? ` - ${company}` : ""}`;
-      const bodyLines = [
-        "Hello AIFORCZ team,",
-        "",
-        "A visitor submitted a Book demo request from the landing page.",
-        "",
-        `Name: ${fullName || "Not provided"}`,
-        `Email: ${email}`,
-        `Company: ${company}`,
-        `Employees: ${employees}`,
-        "",
-        "Message:",
-        message,
-        "",
-        "Please follow up with them to schedule the demo."
-      ];
-      const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+      const mailtoLink = buildDemoEmail({
+        recipient,
+        firstName,
+        lastName,
+        email,
+        company,
+        employees,
+        message
+      });
 
       if (demoSubmit) {
         demoSubmit.textContent = "Opening email...";
       }
 
       window.location.href = mailtoLink;
-      setDemoStatus(`Your email app should open now. Send the prepared email to ${recipient}.`, "success");
+      setDemoStatus(`A formatted demo request email is ready for ${recipient}. Please send it from your email app.`, "success");
 
       window.setTimeout(() => {
         if (demoSubmit) {
