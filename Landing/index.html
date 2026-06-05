@@ -418,7 +418,13 @@
       <button class="demo-close" type="button" aria-label="Close demo form">&times;</button>
       <h2 id="demoTitle">Book a demo</h2>
       <p>Our team will walk you through the product and show you how it can help you achieve your goals.</p>
-      <form class="demo-form" data-demo-email="contact@aiforcz.com">
+      <form
+        class="demo-form"
+        data-demo-email="contact@aiforcz.com"
+        data-emailjs-public-key="YOUR_EMAILJS_PUBLIC_KEY"
+        data-emailjs-service-id="YOUR_EMAILJS_SERVICE_ID"
+        data-emailjs-template-id="YOUR_EMAILJS_TEMPLATE_ID"
+      >
         <div class="demo-row">
           <label class="visually-hidden" for="demoFirstName">First name</label>
           <input id="demoFirstName" name="firstName" type="text" placeholder="First name">
@@ -448,6 +454,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

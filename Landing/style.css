@@ -1323,6 +1323,12 @@ body.modal-open {
   transform: translateY(-1px);
 }
 
+.demo-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+  transform: none;
+}
+
 @media (max-width: 1199px) {
   .nav-shell {
     width: min(calc(100% - 28px), 1120px);

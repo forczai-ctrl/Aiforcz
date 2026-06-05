@@ -53,7 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return typeof value === "string" && value.trim() ? value.trim() : "Not provided";
   };
 
-  const buildDemoEmail = ({ recipient, firstName, lastName, email, company, employees, message }) => {
+  const isConfiguredValue = (value) => {
+    return value && !value.startsWith("YOUR_");
+  };
+
+  const buildDemoEmailParams = ({ recipient, firstName, lastName, email, company, employees, message }) => {
     const fullName = [firstName, lastName].filter((value) => value !== "Not provided").join(" ");
     const submittedAt = new Date().toLocaleString();
     const subjectParts = [
@@ -85,13 +89,21 @@ document.addEventListener("DOMContentLoaded", () => {
       `Reply to the visitor at: ${email}`,
       "Schedule a demo call and share the meeting details."
     ];
-    const headers = [
-      `subject=${encodeURIComponent(subject)}`,
-      `body=${encodeURIComponent(bodyLines.join("\n"))}`,
-      `reply-to=${encodeURIComponent(email)}`
-    ];
 
-    return `mailto:${recipient}?${headers.join("&")}`;
+    return {
+      to_email: recipient,
+      subject,
+      from_name: fullName || email,
+      first_name: firstName,
+      last_name: lastName,
+      user_email: email,
+      reply_to: email,
+      company_name: company,
+      employees,
+      user_message: message,
+      submitted_at: submittedAt,
+      email_body: bodyLines.join("\n")
+    };
   };
 
   const openDemoModal = (trigger) => {
@@ -149,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   if (demoForm) {
-    demoForm.addEventListener("submit", (event) => {
+    demoForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       if (!demoForm.checkValidity()) {
@@ -160,13 +172,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const formData = new FormData(demoForm);
       const recipient = (demoForm.dataset.demoEmail || "contact@aiforcz.com").trim();
+      const publicKey = (demoForm.dataset.emailjsPublicKey || "").trim();
+      const serviceId = (demoForm.dataset.emailjsServiceId || "").trim();
+      const templateId = (demoForm.dataset.emailjsTemplateId || "").trim();
       const firstName = getDemoValue(formData, "firstName");
       const lastName = getDemoValue(formData, "lastName");
       const email = getDemoValue(formData, "email");
       const company = getDemoValue(formData, "company");
       const employees = getDemoValue(formData, "employees");
       const message = getDemoValue(formData, "message");
-      const mailtoLink = buildDemoEmail({
+
+      if (!window.emailjs || !isConfiguredValue(publicKey) || !isConfiguredValue(serviceId) || !isConfiguredValue(templateId)) {
+        setDemoStatus("EmailJS is not configured yet. Please add your EmailJS public key, service ID and template ID in this form.", "error");
+        return;
+      }
+
+      const templateParams = buildDemoEmailParams({
         recipient,
         firstName,
         lastName,
@@ -177,17 +198,22 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (demoSubmit) {
-        demoSubmit.textContent = "Opening email...";
+        demoSubmit.disabled = true;
+        demoSubmit.textContent = "Sending...";
       }
 
-      window.location.href = mailtoLink;
-      setDemoStatus(`A formatted demo request email is ready for ${recipient}. Please send it from your email app.`, "success");
-
-      window.setTimeout(() => {
+      try {
+        await window.emailjs.send(serviceId, templateId, templateParams, { publicKey });
+        demoForm.reset();
+        setDemoStatus("Thanks for requesting a demo. Our team will contact you soon.", "success");
+      } catch (error) {
+        setDemoStatus("Sorry, we could not send your request right now. Please try again or contact us directly.", "error");
+      } finally {
         if (demoSubmit) {
+          demoSubmit.disabled = false;
           demoSubmit.textContent = "Book demo";
         }
-      }, 900);
+      }
     });
   }
 
