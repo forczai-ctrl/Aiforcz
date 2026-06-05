@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: aiforcz-landing
+    runtime: static
+    buildCommand: "true"
+    staticPublishPath: ./Landing
