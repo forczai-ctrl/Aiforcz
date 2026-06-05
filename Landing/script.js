@@ -57,55 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return value && !value.startsWith("YOUR_");
   };
 
-  const buildDemoEmailParams = ({ recipient, firstName, lastName, email, company, employees, message }) => {
-    const fullName = [firstName, lastName].filter((value) => value !== "Not provided").join(" ");
-    const submittedAt = new Date().toLocaleString();
-    const subjectParts = [
-      "Book Demo Request",
-      fullName || email,
-      company !== "Not provided" ? company : ""
-    ].filter(Boolean);
-    const subject = subjectParts.join(" | ");
-    const bodyLines = [
-      "BOOK DEMO REQUEST",
-      "=================",
-      "",
-      `Submitted At: ${submittedAt}`,
-      "Source: AIFORCZ Landing Page",
-      "",
-      "VISITOR DETAILS",
-      "---------------",
-      `Name: ${fullName || "Not provided"}`,
-      `Email: ${email}`,
-      `Company: ${company}`,
-      `Employees: ${employees}`,
-      "",
-      "REQUEST MESSAGE",
-      "---------------",
-      message,
-      "",
-      "NEXT ACTION",
-      "-----------",
-      `Reply to the visitor at: ${email}`,
-      "Schedule a demo call and share the meeting details."
-    ];
-
-    return {
-      to_email: recipient,
-      subject,
-      from_name: fullName || email,
-      first_name: firstName,
-      last_name: lastName,
-      user_email: email,
-      reply_to: email,
-      company_name: company,
-      employees,
-      user_message: message,
-      submitted_at: submittedAt,
-      email_body: bodyLines.join("\n")
-    };
-  };
-
   const openDemoModal = (trigger) => {
     if (!demoModal) return;
 
@@ -166,48 +117,105 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!demoForm.checkValidity()) {
         demoForm.reportValidity();
-        setDemoStatus("Please enter a valid email address before sending.", "error");
+        setDemoStatus("Please fill all required fields before sending.", "error");
         return;
       }
 
       const formData = new FormData(demoForm);
-      const recipient = (demoForm.dataset.demoEmail || "contact@aiforcz.com").trim();
+
+      const adminEmail = (demoForm.dataset.adminEmail || "forczai@gmail.com").trim();
       const publicKey = (demoForm.dataset.emailjsPublicKey || "").trim();
       const serviceId = (demoForm.dataset.emailjsServiceId || "").trim();
-      const templateId = (demoForm.dataset.emailjsTemplateId || "").trim();
+
+      const adminTemplateId = (demoForm.dataset.adminTemplateId || "").trim();
+      const customerTemplateId = (demoForm.dataset.customerTemplateId || "").trim();
+
       const firstName = getDemoValue(formData, "firstName");
       const lastName = getDemoValue(formData, "lastName");
+      const fullName = [firstName, lastName]
+        .filter((value) => value !== "Not provided")
+        .join(" ");
+
       const email = getDemoValue(formData, "email");
+      const phone = getDemoValue(formData, "phone");
       const company = getDemoValue(formData, "company");
       const employees = getDemoValue(formData, "employees");
       const message = getDemoValue(formData, "message");
+      const submittedAt = new Date().toLocaleString();
 
-      if (!window.emailjs || !isConfiguredValue(publicKey) || !isConfiguredValue(serviceId) || !isConfiguredValue(templateId)) {
-        setDemoStatus("EmailJS is not configured yet. Please add your EmailJS public key, service ID and template ID in this form.", "error");
+      if (
+        !window.emailjs ||
+        !isConfiguredValue(publicKey) ||
+        !isConfiguredValue(serviceId) ||
+        !isConfiguredValue(adminTemplateId) ||
+        !isConfiguredValue(customerTemplateId)
+      ) {
+        setDemoStatus(
+          "EmailJS is not configured yet. Please check public key, service ID, admin template ID and customer template ID.",
+          "error"
+        );
         return;
       }
 
-      const templateParams = buildDemoEmailParams({
-        recipient,
-        firstName,
-        lastName,
-        email,
-        company,
-        employees,
-        message
-      });
+      const templateParams = {
+        // common fields
+        name: fullName || email,
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        phone: phone,
+        company: company,
+        employees: employees,
+        message: message,
+        submitted_at: submittedAt,
+
+        // admin template TO field
+        admin_email: adminEmail,
+
+        // customer template TO field
+        to_email: email,
+
+        // reply option
+        reply_to: email,
+
+        // optional aliases for your old template
+        user_email: email,
+        company_name: company,
+        user_message: message
+      };
 
       if (demoSubmit) {
         demoSubmit.disabled = true;
         demoSubmit.textContent = "Sending...";
       }
 
+      setDemoStatus("Sending your demo request...", "success");
+
       try {
-        await window.emailjs.send(serviceId, templateId, templateParams, { publicKey });
+        // 1. Send alert mail to admin team
+        await window.emailjs.send(
+          serviceId,
+          adminTemplateId,
+          templateParams,
+          { publicKey }
+        );
+
+        // 2. Send thank-you mail to customer
+        await window.emailjs.send(
+          serviceId,
+          customerTemplateId,
+          templateParams,
+          { publicKey }
+        );
+
         demoForm.reset();
         setDemoStatus("Thanks for requesting a demo. Our team will contact you soon.", "success");
       } catch (error) {
-        setDemoStatus("Sorry, we could not send your request right now. Please try again or contact us directly.", "error");
+        console.error("EmailJS Error:", error);
+        setDemoStatus(
+          "Sorry, we could not send your request right now. Please try again or contact us directly.",
+          "error"
+        );
       } finally {
         if (demoSubmit) {
           demoSubmit.disabled = false;

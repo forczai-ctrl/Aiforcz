@@ -413,44 +413,44 @@
     </div>
   </footer>
 
-  <div class="demo-modal" id="demoModal" aria-hidden="true">
-    <div class="demo-dialog" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
-      <button class="demo-close" type="button" aria-label="Close demo form">&times;</button>
-      <h2 id="demoTitle">Book a demo</h2>
-      <p>Our team will walk you through the product and show you how it can help you achieve your goals.</p>
-      <form
-        class="demo-form"
-        data-demo-email="contact@aiforcz.com"
-        data-emailjs-public-key="YOUR_EMAILJS_PUBLIC_KEY"
-        data-emailjs-service-id="YOUR_EMAILJS_SERVICE_ID"
-        data-emailjs-template-id="YOUR_EMAILJS_TEMPLATE_ID"
-      >
-        <div class="demo-row">
-          <label class="visually-hidden" for="demoFirstName">First name</label>
-          <input id="demoFirstName" name="firstName" type="text" placeholder="First name">
-          <label class="visually-hidden" for="demoLastName">Last name</label>
-          <input id="demoLastName" name="lastName" type="text" placeholder="Last name">
-        </div>
-        <label class="visually-hidden" for="demoEmail">Enter email address</label>
-        <input id="demoEmail" name="email" type="email" placeholder="Enter email address*" required>
-        <label class="visually-hidden" for="demoCompany">Company name</label>
-        <input id="demoCompany" name="company" type="text" placeholder="Company name">
-        <label class="visually-hidden" for="demoEmployees">How many employees?</label>
-        <select id="demoEmployees" name="employees">
-          <option value="" selected>How many employees?</option>
-          <option value="1-10">1-10</option>
-          <option value="11-50">11-50</option>
-          <option value="51-200">51-200</option>
-          <option value="201-500">201-500</option>
-          <option value="500+">500+</option>
-        </select>
-        <label class="visually-hidden" for="demoMessage">Anything else you want to share?</label>
-        <textarea id="demoMessage" name="message" placeholder="Anything else you want to share?"></textarea>
-        <p class="demo-status" aria-live="polite" hidden></p>
-        <button class="demo-submit" type="submit">Book demo</button>
-      </form>
-    </div>
+<div class="demo-modal" id="demoModal" aria-hidden="true">
+  <div class="demo-dialog" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
+    <button class="demo-close" type="button" aria-label="Close demo form">&times;</button>
+
+    <h2 id="demoTitle">Book a demo</h2>
+    <p>Our team will walk you through the product and show you how it can help you achieve your goals.</p>
+
+    <form
+      class="demo-form"
+      data-admin-email="forczai@gmail.com"
+      data-emailjs-public-key="fahOGAo8Ut43PjBuq"
+      data-emailjs-service-id="service_yzpzx57"
+      data-admin-template-id="template_o3orkec"
+      data-customer-template-id="template_eqzmbx2"
+    >
+      <div class="demo-row">
+        <input id="demoFirstName" name="firstName" type="text" placeholder="First Name*" required>
+        <input id="demoLastName" name="lastName" type="text" placeholder="Last Name">
+      </div>
+
+      <input id="demoEmail" name="email" type="email" placeholder="Email Address*" required>
+
+      <input id="demoPhone" name="phone" type="tel" placeholder="Phone Number*" required>
+
+      <input id="demoCompany" name="company" type="text" placeholder="Company Name*" required>
+
+      <input id="demoCountry" name="country" type="text" placeholder="Country*" required>
+
+      <input id="demoJobTitle" name="jobTitle" type="text" placeholder="Job Title*" required>
+
+      <textarea id="demoMessage" name="message" placeholder="Requirements / Notes"></textarea>
+
+      <p class="demo-status" aria-live="polite" hidden></p>
+
+      <button class="demo-submit" type="submit">Book Demo</button>
+    </form>
   </div>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
